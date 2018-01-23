@@ -1790,7 +1790,6 @@ class Update(Base):
         db = request.db
         user = User.get(request.user.name, request.db)
         data['user'] = user
-        data['title'] = ' '.join([b.nvr for b in data['builds']])
         caveats = []
         data['critpath'] = cls.contains_critpath_component(
             data['builds'], data['release'].name)
@@ -1937,8 +1936,6 @@ class Update(Base):
             comment += '\n\nKarma has been reset.'
         up.comment(db, comment, karma=0, author=u'bodhi')
         caveats.append({'name': 'builds', 'description': comment})
-
-        data['title'] = ' '.join(sorted([b.nvr for b in up.builds]))
 
         # Updates with new or removed builds always go back to testing
         if new_builds or removed_builds:
@@ -2248,6 +2245,7 @@ class Update(Base):
         alias = u'%s-%s-%s' % (prefix, year, id)
         log.debug('Setting alias for %s to %s' % (self.title, alias))
         self.alias = alias
+        self.title = alias
 
     def set_request(self, db, action, username):
         """
